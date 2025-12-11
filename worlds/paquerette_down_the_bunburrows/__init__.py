@@ -103,7 +103,7 @@ class PaqueretteDownTheBunburrowsWorld(World):
                                                                forgottenLocations))
         hay.connect(forgotten)  # Nearly always accessible
 
-        temple = self.create_region("Temple" "The Temple of Bun",
+        temple = self.create_region("Temple", "The Temple of Bun",
                                     generateRegionLocations(self.player,
                                                             templeLocations))
         hay.connect(temple, rule=self.is_temple_unlocked)

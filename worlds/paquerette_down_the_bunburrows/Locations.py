@@ -17,13 +17,9 @@ class PaqueretteLocation(Location):
     dependencies = []
 
     def access_rule(self, state: CollectionState):
-        result = len(self.dependencies) == 0 \
+        return len(self.dependencies) == 0 \
             or all([state.has(dependency, self.player, 1)
                     for dependency in self.dependencies])
-
-        print(self.name + " Accessible? " + str(result))
-
-        return result
 
 
 def makeLocationName(mapName, index):
@@ -50,16 +46,11 @@ def makeLocations(playerId, mapName, count, dependencies):
 def generateLocationsFromRaw(playerId, rawLocation):
     match rawLocation:
         case str():
-            print("case 1")
             return makeLocations(playerId, rawLocation, 1, [])
         case (map, count):
-            print("case 2")
             return makeLocations(playerId, map, count, [])
         case (map, count, dependencies):
-            print("case 3")
             return makeLocations(playerId, map, count, dependencies)
-
-    print("Failure case")
     return []
 
 
@@ -111,9 +102,12 @@ def generateLocationTupleFromRaw(rawLocation):
 
 last_location_id = 1
 
-list_of_locations = generateLocationTuples(pinkLocations, sunkenLocations,
-                                           hayLocations, spookyLocations,
-                                           forgottenLocations, templeLocations,
+list_of_locations = generateLocationTuples(pinkLocations,
+                                           sunkenLocations,
+                                           hayLocations,
+                                           spookyLocations,
+                                           forgottenLocations,
+                                           templeLocations,
                                            falseHellLocations,
                                            sleepHellLocations,
                                            crumblingHellLocations,
