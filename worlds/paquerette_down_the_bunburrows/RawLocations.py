@@ -10,7 +10,6 @@ pinkLocations = [
         "W-4",
         "W-5",
         ("W-6", 2),
-        ("W-7", 1, ["C-7"]),
         "W-8",
         "W-9",
         "W-10",
@@ -40,6 +39,7 @@ hayLocations = [
         "C-5",
         "C-6",
         "C-7",
+        ("W-7", 1, ["C-7"]),
         "C-8",
         "C-9",
         "C-10",
@@ -62,22 +62,31 @@ spookyLocations = [
         "S-12"
         ]
 
-forgottenLocations = [
+# Rooms that require entry-level access (45 bunnies) to fully capture
+forgottenUpperLocations = [
         "E-1",
         "E-2",
-        ("E-3", 4, ["E-2"]),  # TODO- Update to be accurate for C access?
-        ("E-4", 1, ["E-3"]),
-        ("E-5", 1, ["E-3"]),  # TODO- Update to be accurate for C access?
-        ("E-6", 1, ["E-5"]),
+        ("E-3", 4, ["E-2"]),
+        ("E-4", 1, ["E-3", "E-2"])
+        ]
+
+# Rooms require only E-5 and E-3 OR E-5 and C-5
+# Not considered dependent upon Upper locations due to C-3
+forgottenMiddleLocations = [
+        ("E-6", 1),
         ("E-7", 1, ["E-6"]),
-        ("E-8", 1, ["E-7"]),
-        ("E-9", 2, ["E-8"]),
+        ("E-8", 1, ["E-7", "E-6"]),
+        ("E-9", 2, ["E-8", "E-7", "E-6"]),
+        ]
+
+# Rooms require either Middle full access or C-10 access
+forgottenLowerLocations = [
         ("E-10", 2, ["E-9"]),
         ("E-12", 2, ["E-11"])
         ]
 
 templeLocations = [
-        "C-13",
+        ("C-13", 1, ["S-13"]),
 
         "W-13",
         "W-14",
@@ -155,6 +164,8 @@ hellTempleLocations = [
         ("W-26", 2),
 
         ("C-26", 1, ["W-26"]),
-        ("C-27", 1, ["N-26", "C-26", "C-25", "N-25", "S-25", "S-26",
-                     "E-23", "E-24", "E-25", "E-26", "E-27"])
         ]
+
+pillarsLocations = [
+        "C-27"
+]

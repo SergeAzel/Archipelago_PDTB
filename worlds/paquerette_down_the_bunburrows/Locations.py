@@ -1,7 +1,8 @@
 from .RawLocations import pinkLocations, sunkenLocations, hayLocations, \
-        spookyLocations, forgottenLocations, templeLocations, \
+        spookyLocations, forgottenUpperLocations, forgottenMiddleLocations, \
+        forgottenLowerLocations, templeLocations, \
         falseHellLocations, sleepHellLocations, crumblingHellLocations, \
-        hellTempleLocations
+        hellTempleLocations, pillarsLocations
 
 from BaseClasses import Location, CollectionState
 from .Consts import PaqueretteGame
@@ -17,9 +18,12 @@ class PaqueretteLocation(Location):
     dependencies = []
 
     def access_rule(self, state: CollectionState):
-        return len(self.dependencies) == 0 \
-            or all([state.has(dependency, self.player, 1)
-                    for dependency in self.dependencies])
+        noDependents = len(self.dependencies) == 0
+
+        allSatisfied = all(state.has(dependency, self.player)
+                    for dependency in self.dependencies)
+
+        return noDependents or allSatisfied
 
 
 def makeLocationName(mapName, index):
@@ -27,6 +31,9 @@ def makeLocationName(mapName, index):
 
 
 def makeLocation(playerId, mapName, index, dependencies):
+    if mapName == "W-7":
+        x = 5
+
     name = makeLocationName(mapName, index)
     location = PaqueretteLocation(playerId, name, location_name_to_id[name])
 
@@ -84,17 +91,17 @@ def generateLocationTupleFromRaw(rawLocation):
     match rawLocation:
         case str():
             result = [(makeLocationName(rawLocation, 1),
-                              getNextLocationID())]
+                      getNextLocationID())]
             return result
 
         case (map, count):
             result = [(makeLocationName(map, index), getNextLocationID())
-                    for index in range(1, count + 1, 1)]
+                      for index in range(1, count + 1, 1)]
             return result
 
         case (map, count, _):
             result = [(makeLocationName(map, index), getNextLocationID())
-                    for index in range(1, count + 1, 1)]
+                      for index in range(1, count + 1, 1)]
             return result
 
     return []
@@ -102,16 +109,23 @@ def generateLocationTupleFromRaw(rawLocation):
 
 last_location_id = 1
 
-list_of_locations = generateLocationTuples(pinkLocations,
-                                           sunkenLocations,
-                                           hayLocations,
-                                           spookyLocations,
-                                           forgottenLocations,
-                                           templeLocations,
-                                           falseHellLocations,
-                                           sleepHellLocations,
-                                           crumblingHellLocations,
-                                           hellTempleLocations)
+list_of_bunnies = generateLocationTuples(pinkLocations,
+                                         sunkenLocations,
+                                         hayLocations,
+                                         spookyLocations,
+                                         forgottenUpperLocations,
+                                         forgottenMiddleLocations,
+                                         forgottenLowerLocations,
+                                         templeLocations,
+                                         falseHellLocations,
+                                         sleepHellLocations,
+                                         crumblingHellLocations,
+                                         hellTempleLocations,
+                                         pillarsLocations)
 
-location_name_to_id = {location[0]: location[1] for location in list_of_locations}
-location_id_to_name = {location[1]: location[0] for location in list_of_locations}
+list_of_locations = list_of_bunnies
+
+location_name_to_id = {location[0]: location[1]
+                       for location in list_of_locations}
+location_id_to_name = {location[1]: location[0]
+                       for location in list_of_locations}
