@@ -1,6 +1,7 @@
 # Locations are bnuuys
-# either a string for a simple room that (optionally) requires its own tools
+# either a string for a simple room with one bunny
 # or a tuple of (name, # of buns, [extra tools required])
+# If a room has a set of unlockable tools, it will automatically require them
 # locations also are beholden to their region restrictions
 
 pinkLocations = [
@@ -110,7 +111,6 @@ templeLocations = [
         "S-17",
         "S-18",
         "S-19",
-        ("S-20", 1, ["C-20"])
         ]
 
 falseHellLocations = [
@@ -134,27 +134,29 @@ sleepHellLocations = [
         ("E-22", 1, ["E-20"]),
         ]
 
+# Region already depends on C-20 tools globally
 crumblingHellLocations = [
         "C-20",
         "C-21",
         ("C-22", 1, ["E-22"]),
-        "C-23",
-        "C-24",
+        ("C-23", 1, ["C-22"]),
+        ("C-24", 1, ["C-22"]),
 
         "W-19",
         "W-20",
         ("W-21", 1, ["C-21"]),
 
-        "N-19",
+        ("N-19", 2),
         ("N-20", 4),
         "N-21",
         ("N-22", 2, ["C-22"]),
         ("N-23", 1, ["C-22"]),
 
+        "S-20",  # due to capture acceess restrictions, not considered temple
         ("S-21", 2, ["C-21"]),
         ("S-22", 1, ["C-22"]),
-        ("S-23", 1, ["S-22"]),
-        ("S-24", 2, ["S-23"]),
+        ("S-23", 1, ["C-22"]),
+        ("S-24", 2, ["S-23", "C-22"]),
         ]
 
 hellTempleLocations = [
