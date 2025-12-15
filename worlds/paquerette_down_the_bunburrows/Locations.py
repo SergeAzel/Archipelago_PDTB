@@ -2,7 +2,7 @@ from .RawLocations import pinkLocations, sunkenLocations, hayLocations, \
         spookyLocations, forgottenUpperLocations, forgottenMiddleLocations, \
         forgottenLowerLocations, templeLocations, \
         falseHellLocations, sleepHellLocations, crumblingHellLocations, \
-        hellTempleLocations, pillarsLocations
+        hellTempleLocations, pillarsLocations, south20Location, southTempleLocations
 
 from BaseClasses import Location, CollectionState
 from .Consts import PaqueretteGame
@@ -16,21 +16,28 @@ from .Items import item_name_to_id
 class PaqueretteLocation(Location):
     game: str = PaqueretteGame
     dependencies = []
+    alternateDependencies = None
 
     def access_rule(self, state: CollectionState):
         noDependents = len(self.dependencies) == 0
 
-        allSatisfied = all(state.has(dependency, self.player)
-                    for dependency in self.dependencies)
+        allSatisfied = all(state.has(dependency, self.player) for dependency in self.dependencies)
 
-        return noDependents or allSatisfied
+        # If Alternate is None, it is NOT free - also, short-circuit if needed
+        if self.alternateDependencies == None or noDependents or allSatisfied:
+            return noDependents or allSatisfied
+
+        alternateFree = (self.alternateDependencies == [])
+        alternateSatisfied = all(state.has(dependency, self.player) for dependency in self.alternateDependencies)
+
+        return noDependents or allSatisfied or alternateFree or alternateSatisfied
 
 
 def makeLocationName(mapName, index):
     return mapName + "-" + str(index)
 
 
-def makeLocation(playerId, mapName, index, dependencies):
+def makeLocation(playerId, mapName, index, dependencies, expertDependencies):
     if mapName == "W-7":
         x = 5
 
@@ -42,30 +49,34 @@ def makeLocation(playerId, mapName, index, dependencies):
     else:
         location.dependencies = dependencies or []
 
+    location.alternateDependencies = expertDependencies
+
     return location
 
 
-def makeLocations(playerId, mapName, count, dependencies):
-    return [makeLocation(playerId, mapName, index, dependencies)
+def makeLocations(playerId, mapName, count, dependencies, expertDependencies):
+    return [makeLocation(playerId, mapName, index, dependencies, expertDependencies)
             for index in range(1, count + 1, 1)]
 
 
-def generateLocationsFromRaw(playerId, rawLocation):
+def generateLocationsFromRaw(playerId, rawLocation, expertRouting: bool):
     match rawLocation:
         case str():
-            return makeLocations(playerId, rawLocation, 1, [])
+            return makeLocations(playerId, rawLocation, 1, [], None)
         case (map, count):
-            return makeLocations(playerId, map, count, [])
+            return makeLocations(playerId, map, count, [], None)
         case (map, count, dependencies):
-            return makeLocations(playerId, map, count, dependencies)
+            return makeLocations(playerId, map, count, dependencies, None)
+        case (map, count, standardDependencies, expertDependencies):
+            return makeLocations(playerId, map, count, standardDependencies, expertDependencies if expertRouting else None)
     return []
 
 
-def generateRegionLocations(playerId, regionLocations):
+def generateRegionLocations(playerId, regionLocations, expertRouting: bool):
     return [
             location
             for locations in regionLocations
-            for location in generateLocationsFromRaw(playerId, locations)
+            for location in generateLocationsFromRaw(playerId, locations, expertRouting)
             ]
 
 
@@ -104,6 +115,11 @@ def generateLocationTupleFromRaw(rawLocation):
                       for index in range(1, count + 1, 1)]
             return result
 
+        case (map, count, _, _):
+            result = [(makeLocationName(map, index), getNextLocationID())
+                      for index in range(1, count + 1, 1)]
+            return result
+
     return []
 
 
@@ -120,6 +136,8 @@ list_of_bunnies = generateLocationTuples(pinkLocations,
                                          falseHellLocations,
                                          sleepHellLocations,
                                          crumblingHellLocations,
+                                         southTempleLocations,
+                                         south20Location,
                                          hellTempleLocations,
                                          pillarsLocations)
 
