@@ -1,13 +1,16 @@
 from typing import Mapping, Any
 
 from BaseClasses import ItemClassification, CollectionState, Region
-from BaseClasses import Tutorial, Item, Location
+from BaseClasses import Item
 from worlds.AutoWorld import World, WebWorld
+from Options import OptionGroup
 
-from .RawItems import raw_list_of_tools
-from .Items import item_name_to_id, item_id_to_name, fluffle, golden_fluffle
+from .RawItems import raw_list_of_tools, raw_list_of_credits_tools
+from .Items import item_name_to_id, item_id_to_name, fluffle, golden_fluffle, \
+        surface_teleport_trap, elevator_trap
 from .Locations import location_name_to_id, location_id_to_name, \
-        generateRegionLocations, PaqueretteLocation, list_of_bunnies
+        generateRegionLocations, PaqueretteLocation, list_of_bunnies, \
+        list_of_credits_bunnies
 
 from .RawLocations import pinkLocations, \
         sunkenLocations, hayLocations, spookyLocations, \
@@ -19,7 +22,9 @@ from .RawLocations import pinkLocations, \
 
 from .Consts import PaqueretteGame
 
-from .Options import options_presets, PaqueretteOptions, VictoryCondition
+from .Options import options_presets, PaqueretteOptions, VictoryCondition, GoldenFluffleCount, DeathLink, \
+    DeathLinkBehavior, ElevatorTrapDepth, ElevatorTrapIncrement
+from .Options import Traps
 
 
 class PaqueretteItem(Item):
@@ -30,6 +35,19 @@ class PaqueretteDownTheBunburrowsWeb(WebWorld):
     theme = "grassFlowers"
     rich_text_options_doc = True
     options_presets = options_presets
+    option_groups = [
+            OptionGroup("Victory", [
+                VictoryCondition,
+                GoldenFluffleCount,
+                ]),
+            OptionGroup("Traps and DseathLink", [
+                Traps,
+                DeathLink,
+                DeathLinkBehavior,
+                ElevatorTrapDepth,
+                ElevatorTrapIncrement
+                ])
+            ]
 
 
 class PaqueretteDownTheBunburrowsWorld(World):
@@ -50,7 +68,8 @@ class PaqueretteDownTheBunburrowsWorld(World):
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         return self.options.as_dict("home_captures", "expert_routing", "victory_condition",
-                                    "golden_fluffles", "unlock_computer", "unlock_map")
+                                    "golden_fluffles", "unlock_computer", "unlock_map", "death_link",
+                                    "death_link_behavior", "elevator_trap_depth", "elevator_trap_increment")
 
     def generate_early(self):
         self.options.local_items.value.add(golden_fluffle)
@@ -58,15 +77,28 @@ class PaqueretteDownTheBunburrowsWorld(World):
     def create_items(self):
         self.itempool = []
 
-        for item_name in raw_list_of_tools:
-            self.itempool.append(PaqueretteItem(item_name, ItemClassification.progression,
-                              self.item_name_to_id[item_name], self.player))
+        if self.options.victory_condition.value == VictoryCondition.option_credits:
+            for item_name in raw_list_of_credits_tools:
+                self.itempool.append(PaqueretteItem(item_name, ItemClassification.progression,
+                                  self.item_name_to_id[item_name], self.player))
+        else:
+            for item_name in raw_list_of_tools:
+                self.itempool.append(PaqueretteItem(item_name, ItemClassification.progression,
+                                  self.item_name_to_id[item_name], self.player))
+
 
         # If Golden Fluffle run, add Golden Fluffles
         if self.options.victory_condition.value == VictoryCondition.option_golden_fluffle:
             for index in range(self.options.golden_fluffles.value):
                 self.itempool.append(PaqueretteItem(golden_fluffle, ItemClassification.progression,
                                                     self.item_name_to_id[golden_fluffle], self.player))
+
+        if self.options.trap_count.value > 0:
+            for index in range(self.options.trap_count.value):
+                self.itempool.append(PaqueretteItem(surface_teleport_trap, ItemClassification.trap,
+                                                    self.item_name_to_id[
+                                                        surface_teleport_trap if index % 2 == 0 else elevator_trap
+                                                        ], self.player))
 
         while len(self.itempool) < len(location_id_to_name):
             self.itempool.append(PaqueretteItem(fluffle, ItemClassification.filler,
@@ -78,7 +110,17 @@ class PaqueretteDownTheBunburrowsWorld(World):
         self.multiworld.completion_condition[self.player] = self.can_win
 
     def can_win(self, state: CollectionState) -> bool:
-        return state.can_reach("C-27-1", "Location", self.player)
+        match self.options.victory_condition.value:
+            case VictoryCondition.option_credits:
+                return state.can_reach("E-12-1", "Location", self.player)
+            case VictoryCondition.option_full_clear:
+                return all([state.can_reach(bunny, "Location", self.player)
+                        for bunny in list_of_bunnies if state.can_reach(bunny[0], "Location", self.player)])
+            case VictoryCondition.option_golden_bunny:
+                return state.can_reach("C-27-1", "Location", self.player)
+            case VictoryCondition.option_golden_fluffle:
+                return state.has(golden_fluffle, self.player, self.options.golden_fluffles.value)
+        return False
 
     def create_regions(self) -> None:
         expert_flag: bool = self.options.expert_routing.value == 1
@@ -166,8 +208,9 @@ class PaqueretteDownTheBunburrowsWorld(World):
         return region
 
     def get_bunnies(self, state: CollectionState) -> list:
-        return [bunny for bunny in list_of_bunnies
-                    if state.can_reach(bunny[0], "Location", self.player)]
+        return [bunny for bunny in
+                (list_of_credits_bunnies if (self.options.victory_condition.value == VictoryCondition.option_credits) else list_of_bunnies)
+                if state.can_reach(bunny[0], "Location", self.player)]
 
     # region-specific rules below
     def is_forgotten_middle_unlocked_by_center(self, state: CollectionState) -> bool:

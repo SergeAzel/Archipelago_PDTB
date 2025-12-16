@@ -1,4 +1,4 @@
-raw_list_of_tools = [
+raw_list_of_credits_tools = [
         "N-2",  # Sunken Bunburrow Items - 1 excluded, tutorial
         "N-3",
         "N-4",
@@ -73,9 +73,9 @@ raw_list_of_tools = [
         "S-16",
         "S-17",
         "S-18",
-        "S-19",
-        "S-20",
+        "S-19"]
 
+raw_list_of_tools = raw_list_of_credits_tools + [
         "E-16",  # Sleep Hell. 13-15 excluded, no items
         "E-17",
         "E-18",
@@ -97,6 +97,7 @@ raw_list_of_tools = [
         "N-21",
         "N-23",
 
+        "S-20",
         "S-21",
         "S-22",
         "S-23",

@@ -38,9 +38,6 @@ def makeLocationName(mapName, index):
 
 
 def makeLocation(playerId, mapName, index, dependencies, expertDependencies):
-    if mapName == "W-7":
-        x = 5
-
     name = makeLocationName(mapName, index)
     location = PaqueretteLocation(playerId, name, location_name_to_id[name])
 
@@ -49,7 +46,11 @@ def makeLocation(playerId, mapName, index, dependencies, expertDependencies):
     else:
         location.dependencies = dependencies or []
 
-    location.alternateDependencies = expertDependencies
+    if expertDependencies is not None:
+        if mapName in item_name_to_id:
+            location.alternateDependencies = [mapName] + expertDependencies
+        else:
+            location.alternateDependencies = expertDependencies
 
     return location
 
@@ -125,15 +126,18 @@ def generateLocationTupleFromRaw(rawLocation):
 
 last_location_id = 1
 
-list_of_bunnies = generateLocationTuples(pinkLocations,
+list_of_credits_bunnies = generateLocationTuples(pinkLocations,
                                          sunkenLocations,
                                          hayLocations,
                                          spookyLocations,
                                          forgottenUpperLocations,
                                          forgottenMiddleLocations,
                                          forgottenLowerLocations,
-                                         templeLocations,
-                                         falseHellLocations,
+                                         templeLocations)
+
+
+
+list_of_bunnies = list_of_credits_bunnies + generateLocationTuples(falseHellLocations,
                                          sleepHellLocations,
                                          crumblingHellLocations,
                                          southTempleLocations,
@@ -147,3 +151,4 @@ location_name_to_id = {location[0]: location[1]
                        for location in list_of_locations}
 location_id_to_name = {location[1]: location[0]
                        for location in list_of_locations}
+
