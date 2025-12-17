@@ -76,11 +76,16 @@ forgottenUpperLocations = [
 forgottenMiddleLocations = [
         ("E-6", 1),
         ("E-7", 1, ["E-6"]),
-        ("E-8", 1, ["E-7", "E-6"]),
-        ("E-9", 2, ["E-8", "E-7", "E-6"]),
+        ("E-8", 1, ["E-7", "E-6", "C-5"]),  # Always needs C-5
         ]
 
-# Rooms require either Middle full access or C-10 access
+# Hate making a separate record for this, but cant define rule correctly as is
+# Accessible from above, OR from C-10 & E-10
+forgotten9Location = [
+        ("E-9", 2),
+        ]
+
+# Rooms require either Middle & 9 full access or C-10 access
 forgottenLowerLocations = [
         ("E-10", 2),
         ("E-12", 2, ["E-11", "E-10"])

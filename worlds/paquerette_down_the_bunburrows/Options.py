@@ -53,30 +53,38 @@ class UnlockMap(Toggle):
     display_name = "Unlock Map"
 
 
-class Traps(Range):
-    """Whether or not to include traps, and how many"""
-    display_name = "Enable Traps"
+class ElevatorTrapOdds(Range):
+    """Odds of generating an Elevator trap instead of junk"""
+    display_name = "Elevator Trap Odds"
     range_start = 0
-    range_end = 10
+    range_end = 99
+    default = 0
+
+
+class SurfaceTrapOdds(Range):
+    """Odds of generating a Return to Surface trap instead of junk"""
+    display_name = "Surface Trap Odds"
+    range_start = 0
+    range_end = 99
     default = 0
 
 
 class DeathLink(Toggle):
     """Should deathlink be enabled?"""
     display_name = "DeathLink"
+    default = 1
 
 
 class DeathLinkBehavior(Choice):
     """Deaths through Death Link will activate a trap.
 
-    - **RNG**: Picks a trap at random (NonDeterministic)!
     - **Surface**: Returns Paquerette to the surface!
     - **Elevator**: Elevator :)"""
     display_name = "Death Link Behavior"
     rich_text_doc = True
-    option_rng = 0
-    option_surface = 1
-    option_elevator = 2
+    option_surface = 0
+    option_elevator = 1
+    default = 0
 
 
 class ElevatorTrapDepth(Range):
@@ -84,6 +92,7 @@ class ElevatorTrapDepth(Range):
     display_name = "Elevator Trap Depth"
     range_start = 1
     range_end = 100
+    default = 0
 
 
 class ElevatorTrapIncrement(Range):
@@ -91,6 +100,7 @@ class ElevatorTrapIncrement(Range):
     display_name = "Elevator Trap Increment"
     range_start = 0
     range_end = 20
+    default = 0
 
 
 @dataclass
@@ -101,7 +111,8 @@ class PaqueretteOptions(PerGameCommonOptions):
     golden_fluffles: GoldenFluffleCount
     unlock_computer: UnlockComputer
     unlock_map: UnlockMap
-    trap_count: Traps
+    elevator_trap_odds: ElevatorTrapOdds
+    surface_trap_odds: SurfaceTrapOdds
     death_link: DeathLink
     death_link_behavior: DeathLinkBehavior
     elevator_trap_depth: ElevatorTrapDepth
@@ -109,42 +120,45 @@ class PaqueretteOptions(PerGameCommonOptions):
 
 
 options_presets = {
-        "Standard Difficulty": {
+        "Standard": {
             "home_captures": False,
             "expert_routing": False,
-            "victory_condition": "credits",
+            "victory_condition": VictoryCondition.option_credits,
             "golden_fluffles": 1,
             "unlock_computer": False,
             "unlock_map": False,
-            "trap_count": False,
-            "death_link": False,
-            "death_link_behavior": "rng",
+            "elevator_trap_odds": 0,
+            "surface_trap_odds": 0,
+            "death_link": True,
+            "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0
         },
-        "Advanced Difficulty": {
+        "Advanced": {
             "home_captures": False,
             "expert_routing": False,
-            "victory_condition": "golden_bunny",
+            "victory_condition": VictoryCondition.option_golden_bunny,
             "golden_fluffles": 1,
             "unlock_computer": False,
             "unlock_map": False,
-            "trap_count": False,
-            "death_link": False,
-            "death_link_behavior": "rng",
+            "elevator_trap_odds": 0,
+            "surface_trap_odds": 0,
+            "death_link": True,
+            "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0,
         },
-        "Expert Difficulty": {
+        "Expert": {
             "home_captures": True,
             "expert_routing": True,
-            "victory_condition": "golden_fluffle",
+            "victory_condition": VictoryCondition.option_golden_fluffle,
             "golden_fluffles": 6,
             "unlock_computer": False,
             "unlock_map": False,
-            "trap_count": False,
-            "death_link": False,
-            "death_link_behavior": "rng",
+            "elevator_trap_odds": 0,
+            "surface_trap_odds": 0,
+            "death_link": True,
+            "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0,
 

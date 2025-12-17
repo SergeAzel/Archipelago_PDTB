@@ -1,7 +1,7 @@
 from typing import Mapping, Any
 
 from BaseClasses import ItemClassification, CollectionState, Region
-from BaseClasses import Item
+from BaseClasses import Item, Tutorial
 from worlds.AutoWorld import World, WebWorld
 from Options import OptionGroup
 
@@ -9,7 +9,7 @@ from .RawItems import raw_list_of_tools, raw_list_of_credits_tools
 from .Items import item_name_to_id, item_id_to_name, fluffle, golden_fluffle, \
         surface_teleport_trap, elevator_trap
 from .Locations import location_name_to_id, location_id_to_name, \
-        generateRegionLocations, PaqueretteLocation, list_of_bunnies, \
+        generateRegionLocations, list_of_bunnies, \
         list_of_credits_bunnies
 
 from .RawLocations import pinkLocations, \
@@ -18,13 +18,12 @@ from .RawLocations import pinkLocations, \
         forgottenLowerLocations, templeLocations, \
         falseHellLocations, sleepHellLocations, crumblingHellLocations, \
         hellTempleLocations, pillarsLocations, \
-        south20Location, southTempleLocations
+        south20Location, southTempleLocations, forgotten9Location
 
 from .Consts import PaqueretteGame
 
 from .Options import options_presets, PaqueretteOptions, VictoryCondition, GoldenFluffleCount, DeathLink, \
-    DeathLinkBehavior, ElevatorTrapDepth, ElevatorTrapIncrement
-from .Options import Traps
+    DeathLinkBehavior, ElevatorTrapDepth, ElevatorTrapIncrement, ElevatorTrapOdds, SurfaceTrapOdds
 
 
 class PaqueretteItem(Item):
@@ -40,14 +39,25 @@ class PaqueretteDownTheBunburrowsWeb(WebWorld):
                 VictoryCondition,
                 GoldenFluffleCount,
                 ]),
-            OptionGroup("Traps and DseathLink", [
-                Traps,
+            OptionGroup("Traps and DeathLink", [
                 DeathLink,
                 DeathLinkBehavior,
+                ElevatorTrapOdds,
+                SurfaceTrapOdds,
                 ElevatorTrapDepth,
                 ElevatorTrapIncrement
                 ])
             ]
+
+    setup_en = Tutorial(
+        "Multiworld Setup Guide",
+        "A guide to setting up Paquerette Down The Bunburrows for MultiWorld.",
+        "English",
+        "setup_en.md",
+        "setup/en",
+        ["SergeAzel"])
+
+    tutorials = [setup_en]
 
 
 class PaqueretteDownTheBunburrowsWorld(World):
@@ -86,25 +96,28 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 self.itempool.append(PaqueretteItem(item_name, ItemClassification.progression,
                                   self.item_name_to_id[item_name], self.player))
 
-
         # If Golden Fluffle run, add Golden Fluffles
         if self.options.victory_condition.value == VictoryCondition.option_golden_fluffle:
             for index in range(self.options.golden_fluffles.value):
                 self.itempool.append(PaqueretteItem(golden_fluffle, ItemClassification.progression,
                                                     self.item_name_to_id[golden_fluffle], self.player))
 
-        if self.options.trap_count.value > 0:
-            for index in range(self.options.trap_count.value):
-                self.itempool.append(PaqueretteItem(surface_teleport_trap, ItemClassification.trap,
-                                                    self.item_name_to_id[
-                                                        surface_teleport_trap if index % 2 == 0 else elevator_trap
-                                                        ], self.player))
-
         while len(self.itempool) < len(location_id_to_name):
-            self.itempool.append(PaqueretteItem(fluffle, ItemClassification.filler,
-                              self.item_name_to_id[fluffle], self.player))
+            self.itempool.append(self.create_garbage())
 
         self.multiworld.itempool += self.itempool
+
+    def create_garbage(self):
+        if self.random.randint(0, 99) < self.options.surface_trap_odds:
+            return PaqueretteItem(surface_teleport_trap, ItemClassification.trap,
+                                  self.item_name_to_id[surface_teleport_trap], self.player)
+
+        if self.random.randint(0, 99) < self.options.elevator_trap_odds:
+            return PaqueretteItem(elevator_trap, ItemClassification.trap,
+                                  self.item_name_to_id[elevator_trap], self.player)
+
+        return PaqueretteItem(fluffle, ItemClassification.filler,
+                              self.item_name_to_id[fluffle], self.player)
 
     def set_rules(self) -> None:
         self.multiworld.completion_condition[self.player] = self.can_win
@@ -139,6 +152,8 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 generateRegionLocations(self.player, forgottenUpperLocations, expert_flag))
         forgotten_middle = self.create_region("ForgottenMiddle", "The Forgotten Bunburrow",
                 generateRegionLocations(self.player, forgottenMiddleLocations, expert_flag))
+        forgotten_9 = self.create_region("Forgotten9", "The Forgotten Bunburrow",
+                generateRegionLocations(self.player, forgotten9Location, expert_flag))
         forgotten_lower = self.create_region("ForgottenLower", "The Forgotten Bunburrow",
                 generateRegionLocations(self.player, forgottenLowerLocations, expert_flag))
 
@@ -154,14 +169,16 @@ class PaqueretteDownTheBunburrowsWorld(World):
         menu.connect(forgotten_upper, rule=lambda state: len(self.get_bunnies(state)) >= 45)
 
         forgotten_upper.connect(forgotten_middle, rule=self.is_forgotten_middle_unlocked_by_upper)
-        forgotten_middle.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_middle)
+        forgotten_middle.connect(forgotten_9, rule=self.is_forgotten_9_unlocked_by_middle)
+        forgotten_9.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_9)
         hay.connect(temple, rule=self.is_temple_unlocked)
         temple.connect(south_temple)
 
         if expert_flag:
             hay.connect(spooky)  # Always accessible from C-3
-            hay.connect(forgotten_middle, rule=self.is_forgotten_middle_unlocked_by_center)
-            hay.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_center)
+            hay.connect(forgotten_middle, rule=self.is_forgotten_middle_unlocked_by_hay)
+            hay.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_hay)
+            forgotten_lower.connect(forgotten_9, rule=self.is_forgotten_9_unlocked_by_lower)
 
         # Everything above can be for all runs.
         # Everything below, only things that go past credits.
@@ -181,7 +198,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
                                             generateRegionLocations(self.player, hellTempleLocations, expert_flag))
             pillars = self.create_region("Pillars", "The Pillars Room",
                                          generateRegionLocations(self.player, pillarsLocations, expert_flag))
-
 
             temple.connect(false_hell)
             forgotten_lower.connect(sleep_hell, rule=self.is_sleep_hell_unlocked)
@@ -213,7 +229,7 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 if state.can_reach(bunny[0], "Location", self.player)]
 
     # region-specific rules below
-    def is_forgotten_middle_unlocked_by_center(self, state: CollectionState) -> bool:
+    def is_forgotten_middle_unlocked_by_hay(self, state: CollectionState) -> bool:
         # Access check by C-5 or C-3 (via E-3)
         return state.has("C-5", self.player, 1) and \
                 state.has("E-3", self.player, 1) and \
@@ -225,14 +241,20 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 state.has("E-3", self.player, 1) and \
                 state.has("E-5", self.player, 1)
 
-    def is_forgotten_lower_unlocked_by_middle(self, state: CollectionState) -> bool:
+    def is_forgotten_9_unlocked_by_middle(self, state: CollectionState) -> bool:
         # Access restricted by E-5, E-6, E-7, E-8, and E-9
         return state.has("E-6", self.player, 1) and \
                 state.has("E-7", self.player, 1) and \
-                state.has("E-8", self.player, 1) and \
-                state.has("E-9", self.player, 1)
+                state.has("E-8", self.player, 1)
 
-    def is_forgotten_lower_unlocked_by_center(self, state: CollectionState) -> bool:
+    def is_forgotten_9_unlocked_by_lower(self, state: CollectionState) -> bool:
+        # C-10 to E-10 to E-9 Access
+        return state.has("E-10", self.player, 1)
+
+    def is_forgotten_lower_unlocked_by_9(self, state: CollectionState) -> bool:
+        return state.has("E-9", self.player, 1)
+
+    def is_forgotten_lower_unlocked_by_hay(self, state: CollectionState) -> bool:
         # Access only restricted by C-10
         return state.has("C-10", self.player, 1)
 

@@ -2,7 +2,8 @@ from .RawLocations import pinkLocations, sunkenLocations, hayLocations, \
         spookyLocations, forgottenUpperLocations, forgottenMiddleLocations, \
         forgottenLowerLocations, templeLocations, \
         falseHellLocations, sleepHellLocations, crumblingHellLocations, \
-        hellTempleLocations, pillarsLocations, south20Location, southTempleLocations
+        hellTempleLocations, pillarsLocations, south20Location, \
+        southTempleLocations, forgotten9Location
 
 from BaseClasses import Location, CollectionState
 from .Consts import PaqueretteGame
@@ -132,6 +133,7 @@ list_of_credits_bunnies = generateLocationTuples(pinkLocations,
                                          spookyLocations,
                                          forgottenUpperLocations,
                                          forgottenMiddleLocations,
+                                         forgotten9Location,
                                          forgottenLowerLocations,
                                          templeLocations)
 
