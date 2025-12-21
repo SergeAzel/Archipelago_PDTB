@@ -9,16 +9,16 @@ from .RawItems import raw_list_of_tools, raw_list_of_credits_tools
 from .Items import item_name_to_id, item_id_to_name, fluffle, golden_fluffle, \
         surface_teleport_trap, elevator_trap
 from .Locations import location_name_to_id, location_id_to_name, \
-        generateRegionLocations, list_of_bunnies, \
+        generateRegionBunnies, list_of_bunnies, \
         list_of_credits_bunnies
 
-from .RawLocations import pinkLocations, \
-        sunkenLocations, hayLocations, spookyLocations, \
-        forgottenUpperLocations, forgottenMiddleLocations, \
-        forgottenLowerLocations, templeLocations, \
-        falseHellLocations, sleepHellLocations, crumblingHellLocations, \
-        hellTempleLocations, pillarsLocations, \
-        south20Location, southTempleLocations, forgotten9Location
+from .Bunnies import pinkBunnies, \
+        sunkenBunnies, hayBunnies, spookyBunnies, \
+        forgottenUpperBunnies, forgottenMiddleBunnies, \
+        forgottenLowerBunnies, templeBunnies, \
+        falseHellBunnies, sleepHellBunnies, crumblingHellBunnies, \
+        hellTempleBunnies, pillarsBunny, forgotten8Bunny, \
+        south20Bunny, southTempleBunnies, forgotten9Bunnies
 
 from .Consts import PaqueretteGame
 
@@ -102,8 +102,13 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 self.itempool.append(PaqueretteItem(golden_fluffle, ItemClassification.progression,
                                                     self.item_name_to_id[golden_fluffle], self.player))
 
-        while len(self.itempool) < len(location_id_to_name):
-            self.itempool.append(self.create_garbage())
+        if self.options.victory_condition.value == VictoryCondition.option_credits:
+            while len(self.itempool) < len(list_of_credits_bunnies):
+                self.itempool.append(self.create_garbage())
+        else:
+            while len(self.itempool) < len(list_of_bunnies):
+                self.itempool.append(self.create_garbage())
+
 
         self.multiworld.itempool += self.itempool
 
@@ -139,27 +144,27 @@ class PaqueretteDownTheBunburrowsWorld(World):
 
         menu = self.create_region("Menu")
         pink = self.create_region("Pink", "The Pink Bunburrow",
-                generateRegionLocations(self.player, pinkLocations, expert_flag))
+                generateRegionBunnies(self.player, pinkBunnies, expert_flag))
         sunken = self.create_region("Sunken", "The Sunken Bunburrow",
-                generateRegionLocations(self.player, sunkenLocations, expert_flag))
+                generateRegionBunnies(self.player, sunkenBunnies, expert_flag))
         hay = self.create_region("Hay", "The Hay Bunburrow",
-                generateRegionLocations(self.player, hayLocations, expert_flag))
+                generateRegionBunnies(self.player, hayBunnies, expert_flag))
         spooky = self.create_region("Spooky", "The Spooky Bunburrow",
-                generateRegionLocations(self.player, spookyLocations, expert_flag))
+                generateRegionBunnies(self.player, spookyBunnies, expert_flag))
 
         forgotten_upper = self.create_region("ForgottenUpper", "The Forgotten Bunburrow",
-                generateRegionLocations(self.player, forgottenUpperLocations, expert_flag))
+                generateRegionBunnies(self.player, forgottenUpperBunnies, expert_flag))
         forgotten_middle = self.create_region("ForgottenMiddle", "The Forgotten Bunburrow",
-                generateRegionLocations(self.player, forgottenMiddleLocations, expert_flag))
+                generateRegionBunnies(self.player, forgottenMiddleBunnies, expert_flag))
         forgotten_9 = self.create_region("Forgotten9", "The Forgotten Bunburrow",
-                generateRegionLocations(self.player, forgotten9Location, expert_flag))
+                generateRegionBunnies(self.player, forgotten9Bunnies, expert_flag))
         forgotten_lower = self.create_region("ForgottenLower", "The Forgotten Bunburrow",
-                generateRegionLocations(self.player, forgottenLowerLocations, expert_flag))
+                generateRegionBunnies(self.player, forgottenLowerBunnies, expert_flag))
 
         temple = self.create_region("Temple", "The Temple of Bun",
-                generateRegionLocations(self.player, templeLocations, expert_flag))
+                generateRegionBunnies(self.player, templeBunnies, expert_flag))
         south_temple = self.create_region("SouthTemple", "The Temple of Bun",
-                generateRegionLocations(self.player, southTempleLocations, expert_flag))
+                generateRegionBunnies(self.player, southTempleBunnies, expert_flag))
 
         menu.connect(pink)
         menu.connect(sunken)
@@ -183,21 +188,25 @@ class PaqueretteDownTheBunburrowsWorld(World):
         # Everything below, only things that go past credits.
 
         if not self.options.victory_condition == VictoryCondition.option_credits:
+            forgotten_8 = self.create_region("Forgotten8", "The Forgotten Bunburrow",
+                                             generateRegionBunnies(self.player, forgotten8Bunny, expert_flag))
+
             south20 = self.create_region("South20", "The Temple of Bun",
-                                         generateRegionLocations(self.player, south20Location, expert_flag))
+                                         generateRegionBunnies(self.player, south20Bunny, expert_flag))
 
             false_hell = self.create_region("FalseHell", "The False Hells",
-                                           generateRegionLocations(self.player, falseHellLocations, expert_flag))
+                                           generateRegionBunnies(self.player, falseHellBunnies, expert_flag))
             sleep_hell = self.create_region("SleepHell", "The Nightmare Hells",
-                                           generateRegionLocations(self.player, sleepHellLocations, expert_flag))
+                                           generateRegionBunnies(self.player, sleepHellBunnies, expert_flag))
             crumbled_hell = self.create_region("CrumbledHell", "The Crumbling Hells",
-                                              generateRegionLocations(self.player, crumblingHellLocations, expert_flag))
+                                              generateRegionBunnies(self.player, crumblingHellBunnies, expert_flag))
 
             hell_temple = self.create_region("HellTemple", "The Temple of Hell",
-                                            generateRegionLocations(self.player, hellTempleLocations, expert_flag))
+                                            generateRegionBunnies(self.player, hellTempleBunnies, expert_flag))
             pillars = self.create_region("Pillars", "The Pillars Room",
-                                         generateRegionLocations(self.player, pillarsLocations, expert_flag))
+                                         generateRegionBunnies(self.player, pillarsBunny, expert_flag))
 
+            forgotten_middle.connect(forgotten_8, rule=self.is_forgotten_8_unlocked)
             temple.connect(false_hell)
             forgotten_lower.connect(sleep_hell, rule=self.is_sleep_hell_unlocked)
             sleep_hell.connect(crumbled_hell, rule=self.is_crumbled_hell_unlocked)
@@ -230,8 +239,8 @@ class PaqueretteDownTheBunburrowsWorld(World):
     # region-specific rules below
     def is_forgotten_middle_unlocked_by_hay(self, state: CollectionState) -> bool:
         # Access check by C-5 or C-3 (via E-3)
-        return state.has("C-5", self.player, 1) and \
-                state.has("E-3", self.player, 1) and \
+        return (state.has("C-5", self.player, 1) or
+                state.has("E-3", self.player, 1)) and \
                 state.has("E-5", self.player, 1)
 
     def is_forgotten_middle_unlocked_by_upper(self, state: CollectionState) -> bool:
@@ -239,6 +248,11 @@ class PaqueretteDownTheBunburrowsWorld(World):
         return state.has("E-2", self.player, 1) and \
                 state.has("E-3", self.player, 1) and \
                 state.has("E-5", self.player, 1)
+
+    def is_forgotten_8_unlocked(self, state: CollectionState) -> bool:
+        return state.has("E-6", self.player, 1) and \
+                state.has("E-7", self.player, 1) and \
+                state.has("C-5", self.player, 1)
 
     def is_forgotten_9_unlocked_by_middle(self, state: CollectionState) -> bool:
         # Access restricted by E-5, E-6, E-7, E-8, and E-9

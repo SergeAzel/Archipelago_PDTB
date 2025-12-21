@@ -1,151 +1,108 @@
-from .RawLocations import pinkLocations, sunkenLocations, hayLocations, \
-        spookyLocations, forgottenUpperLocations, forgottenMiddleLocations, \
-        forgottenLowerLocations, templeLocations, \
-        falseHellLocations, sleepHellLocations, crumblingHellLocations, \
-        hellTempleLocations, pillarsLocations, south20Location, \
-        southTempleLocations, forgotten9Location
+from .Bunnies import pinkBunnies, sunkenBunnies, hayBunnies, \
+        spookyBunnies, forgottenUpperBunnies, forgottenMiddleBunnies, \
+        forgottenLowerBunnies, templeBunnies, \
+        falseHellBunnies, sleepHellBunnies, crumblingHellBunnies, \
+        hellTempleBunnies, pillarsBunny, south20Bunny, \
+        southTempleBunnies, forgotten9Bunnies, forgotten8Bunny, \
+        Bunny
 
 from BaseClasses import Location, CollectionState
 from .Consts import PaqueretteGame
-from .Items import item_name_to_id
+
+
+class PaqueretteLocation(Location):
+    game: str = PaqueretteGame
 
 
 # The truth is, all these "locations" are
 # actually bnuuys that could be captured.
 
 
-class PaqueretteLocation(Location):
+class PaqueretteBunLocation(PaqueretteLocation):
     game: str = PaqueretteGame
-    dependencies = []
-    alternateDependencies = None
+
+    def __init__(self, player: int, name: str, id: int, bun: Bunny, use_expert: bool):
+        super().__init__(player, name, id)
+        self.bun: Bunny = bun
+        self.use_expert: bool = use_expert
 
     def access_rule(self, state: CollectionState):
-        noDependents = len(self.dependencies) == 0
+        if not self.bun.requires:
+            return True
 
-        allSatisfied = all(state.has(dependency, self.player) for dependency in self.dependencies)
+        if any(requirement.satisfied(state, self.player)
+               for requirement in self.bun.requires):
+            return True
 
-        # If Alternate is None, it is NOT free - also, short-circuit if needed
-        if self.alternateDependencies == None or noDependents or allSatisfied:
-            return noDependents or allSatisfied
-
-        alternateFree = (self.alternateDependencies == [])
-        alternateSatisfied = all(state.has(dependency, self.player) for dependency in self.alternateDependencies)
-
-        return noDependents or allSatisfied or alternateFree or alternateSatisfied
+        return self.use_expert and any(
+                requirement.satisfied(state, self.player)
+                for requirement in self.bun.expert)
 
 
-def makeLocationName(mapName, index):
+def makeLocationName(mapName: str, index: int) -> str:
     return mapName + "-" + str(index)
 
 
-def makeLocation(playerId, mapName, index, dependencies, expertDependencies):
-    name = makeLocationName(mapName, index)
-    location = PaqueretteLocation(playerId, name, location_name_to_id[name])
-
-    if mapName in item_name_to_id:
-        location.dependencies = [mapName] + (dependencies or [])
-    else:
-        location.dependencies = dependencies or []
-
-    if expertDependencies is not None:
-        if mapName in item_name_to_id:
-            location.alternateDependencies = [mapName] + expertDependencies
-        else:
-            location.alternateDependencies = expertDependencies
-
-    return location
+def generateBunnyLocation(playerId, bunny: Bunny, expertRouting: bool) \
+        -> PaqueretteBunLocation:
+    name = makeLocationName(bunny.map, bunny.index)
+    return PaqueretteBunLocation(playerId, name, location_name_to_id[name], bunny, expertRouting)
 
 
-def makeLocations(playerId, mapName, count, dependencies, expertDependencies):
-    return [makeLocation(playerId, mapName, index, dependencies, expertDependencies)
-            for index in range(1, count + 1, 1)]
 
-
-def generateLocationsFromRaw(playerId, rawLocation, expertRouting: bool):
-    match rawLocation:
-        case str():
-            return makeLocations(playerId, rawLocation, 1, [], None)
-        case (map, count):
-            return makeLocations(playerId, map, count, [], None)
-        case (map, count, dependencies):
-            return makeLocations(playerId, map, count, dependencies, None)
-        case (map, count, standardDependencies, expertDependencies):
-            return makeLocations(playerId, map, count, standardDependencies, expertDependencies if expertRouting else None)
-    return []
-
-
-def generateRegionLocations(playerId, regionLocations, expertRouting: bool):
+def generateRegionBunnies(playerId,
+                          regionBunnies: list[Bunny],
+                          expertRouting: bool) -> list[PaqueretteBunLocation]:
     return [
-            location
-            for locations in regionLocations
-            for location in generateLocationsFromRaw(playerId, locations, expertRouting)
+            generateBunnyLocation(playerId, bunny, expertRouting)
+            for bunny in regionBunnies
             ]
 
 
 # locations dictionary generation
 
 
-def getNextLocationID():
+def getNextLocationID() -> int:
     global last_location_id
     last_location_id += 1
     return last_location_id
 
 
-def generateLocationTuples(*locationCollections):
+def generateLocationTupleFromBunny(bunny: Bunny) -> tuple[str, int]:
+    return (makeLocationName(bunny.map, bunny.index), getNextLocationID())
+
+
+def generateLocationTuples(*bunnyCollections: list[Bunny]) -> list[tuple[str, int]]:
     return [
-            location
-            for locationCollection in locationCollections
-            for locations in locationCollection
-            for location in generateLocationTupleFromRaw(locations)
+            generateLocationTupleFromBunny(bunny)
+            for bunnies in bunnyCollections
+            for bunny in bunnies
             ]
-
-
-def generateLocationTupleFromRaw(rawLocation):
-    match rawLocation:
-        case str():
-            result = [(makeLocationName(rawLocation, 1),
-                      getNextLocationID())]
-            return result
-
-        case (map, count):
-            result = [(makeLocationName(map, index), getNextLocationID())
-                      for index in range(1, count + 1, 1)]
-            return result
-
-        case (map, count, _):
-            result = [(makeLocationName(map, index), getNextLocationID())
-                      for index in range(1, count + 1, 1)]
-            return result
-
-        case (map, count, _, _):
-            result = [(makeLocationName(map, index), getNextLocationID())
-                      for index in range(1, count + 1, 1)]
-            return result
-
-    return []
 
 
 last_location_id = 1
 
-list_of_credits_bunnies = generateLocationTuples(pinkLocations,
-                                         sunkenLocations,
-                                         hayLocations,
-                                         spookyLocations,
-                                         forgottenUpperLocations,
-                                         forgottenMiddleLocations,
-                                         forgotten9Location,
-                                         forgottenLowerLocations,
-                                         templeLocations)
+list_of_credits_bunnies = generateLocationTuples(pinkBunnies,
+                                         sunkenBunnies,
+                                         hayBunnies,
+                                         spookyBunnies,
+                                         forgottenUpperBunnies,
+                                         forgottenMiddleBunnies,
+                                         forgotten9Bunnies,
+                                         forgottenLowerBunnies,
+                                         templeBunnies,
+                                         southTempleBunnies)
 
 
 
-list_of_bunnies = list_of_credits_bunnies + generateLocationTuples(falseHellLocations,
-                                         sleepHellLocations,
-                                         crumblingHellLocations,
-                                         southTempleLocations,
-                                         south20Location,
-                                         hellTempleLocations,
-                                         pillarsLocations)
+list_of_bunnies = list_of_credits_bunnies + generateLocationTuples(falseHellBunnies,
+                                         forgotten8Bunny,
+                                         sleepHellBunnies,
+                                         crumblingHellBunnies,
+                                         southTempleBunnies,
+                                         south20Bunny,
+                                         hellTempleBunnies,
+                                         pillarsBunny)
 
 list_of_locations = list_of_bunnies
 
@@ -153,4 +110,3 @@ location_name_to_id = {location[0]: location[1]
                        for location in list_of_locations}
 location_id_to_name = {location[1]: location[0]
                        for location in list_of_locations}
-

@@ -46,11 +46,13 @@ class ExpertRouting(Toggle):
 class UnlockComputer(Toggle):
     """Unlock the portable computer by default"""
     display_name = "Unlock Computer"
+    default = 1
 
 
 class UnlockMap(Toggle):
     """Unlock the map in the computer by default"""
     display_name = "Unlock Map"
+    default = 1
 
 
 class ElevatorTrapOdds(Range):
@@ -125,8 +127,8 @@ options_presets = {
             "expert_routing": False,
             "victory_condition": VictoryCondition.option_credits,
             "golden_fluffles": 1,
-            "unlock_computer": False,
-            "unlock_map": False,
+            "unlock_computer": True,
+            "unlock_map": True,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
             "death_link": True,
@@ -139,7 +141,7 @@ options_presets = {
             "expert_routing": False,
             "victory_condition": VictoryCondition.option_golden_bunny,
             "golden_fluffles": 1,
-            "unlock_computer": False,
+            "unlock_computer": True,
             "unlock_map": False,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
@@ -153,7 +155,7 @@ options_presets = {
             "expert_routing": True,
             "victory_condition": VictoryCondition.option_golden_fluffle,
             "golden_fluffles": 6,
-            "unlock_computer": False,
+            "unlock_computer": True,
             "unlock_map": False,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
