@@ -127,8 +127,7 @@ class PaqueretteDownTheBunburrowsWorld(World):
             case VictoryCondition.option_credits:
                 return state.can_reach("E-12-1", "Location", self.player)
             case VictoryCondition.option_full_clear:
-                return all([state.can_reach(bunny, "Location", self.player)
-                        for bunny in list_of_bunnies if state.can_reach(bunny[0], "Location", self.player)])
+                return all([state.can_reach(bunny[0], "Location", self.player) for bunny in list_of_bunnies])
             case VictoryCondition.option_golden_bunny:
                 return state.can_reach("C-27-1", "Location", self.player)
             case VictoryCondition.option_golden_fluffle:

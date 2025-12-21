@@ -92,7 +92,7 @@ class ElevatorTrapDepth(Range):
     display_name = "Elevator Trap Depth"
     range_start = 1
     range_end = 100
-    default = 0
+    default = 10
 
 
 class ElevatorTrapIncrement(Range):
