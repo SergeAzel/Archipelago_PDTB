@@ -156,6 +156,8 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 generateRegionBunnies(self.player, forgottenUpperBunnies, expert_flag))
         forgotten_middle = self.create_region("ForgottenMiddle", "The Forgotten Bunburrow",
                 generateRegionBunnies(self.player, forgottenMiddleBunnies, expert_flag))
+        forgotten_8 = self.create_region("Forgotten8", "The Forgotten Bunburrow",
+                generateRegionBunnies(self.player, forgotten8Bunny, expert_flag))
         forgotten_9 = self.create_region("Forgotten9", "The Forgotten Bunburrow",
                 generateRegionBunnies(self.player, forgotten9Bunnies, expert_flag))
         forgotten_lower = self.create_region("ForgottenLower", "The Forgotten Bunburrow",
@@ -167,7 +169,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 generateRegionBunnies(self.player, southTempleBunnies, expert_flag))
         false_hell = self.create_region("FalseHell", "The False Hells",
                 generateRegionBunnies(self.player, falseHellBunnies, expert_flag))
-
         menu.connect(pink)
         menu.connect(sunken)
         menu.connect(hay, rule=lambda state: len(self.get_bunnies(state)) >= 18)
@@ -175,6 +176,7 @@ class PaqueretteDownTheBunburrowsWorld(World):
         menu.connect(forgotten_upper, rule=lambda state: len(self.get_bunnies(state)) >= 45)
 
         forgotten_upper.connect(forgotten_middle, rule=self.is_forgotten_middle_unlocked_by_upper)
+        forgotten_middle.connect(forgotten_8, rule=self.is_forgotten_8_unlocked)
         forgotten_middle.connect(forgotten_9, rule=self.is_forgotten_9_unlocked_by_middle)
         forgotten_9.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_9)
         hay.connect(temple, rule=self.is_temple_unlocked)
@@ -191,8 +193,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
         # Everything below, only things that go past credits.
 
         if not self.options.victory_condition == VictoryCondition.option_credits:
-            forgotten_8 = self.create_region("Forgotten8", "The Forgotten Bunburrow",
-                                             generateRegionBunnies(self.player, forgotten8Bunny, expert_flag))
 
             south20 = self.create_region("South20", "The Temple of Bun",
                                          generateRegionBunnies(self.player, south20Bunny, expert_flag))
@@ -207,7 +207,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
             pillars = self.create_region("Pillars", "The Pillars Room",
                                          generateRegionBunnies(self.player, pillarsBunny, expert_flag))
 
-            forgotten_middle.connect(forgotten_8, rule=self.is_forgotten_8_unlocked)
             forgotten_lower.connect(sleep_hell, rule=self.is_sleep_hell_unlocked)
             sleep_hell.connect(crumbled_hell, rule=self.is_crumbled_hell_unlocked)
             crumbled_hell.connect(south20)

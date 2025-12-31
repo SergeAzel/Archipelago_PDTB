@@ -46,6 +46,12 @@ raw_list_of_credits_tools = [
         "E-11",
 
         "C-13",  # Temple First Room
+        "C-14",  # False Hell
+        "C-15",
+        "C-16",
+        "C-17",
+        "C-18",
+        "C-19",
 
         "W-14",  # W-13 excluded, no items
         "W-15",
@@ -70,13 +76,6 @@ raw_list_of_credits_tools = [
         "S-19"]
 
 raw_list_of_tools = raw_list_of_credits_tools + [
-        "C-14",  # False Hell
-        "C-15",
-        "C-16",
-        "C-17",
-        "C-18",
-        "C-19",
-
         "E-16",  # Sleep Hell. 13-15 excluded, no items
         "E-17",
         "E-18",

@@ -91,12 +91,13 @@ list_of_credits_bunnies = generateLocationTuples(pinkBunnies,
                                          forgotten9Bunnies,
                                          forgottenLowerBunnies,
                                          templeBunnies,
-                                         southTempleBunnies)
-
-
-
-list_of_bunnies = list_of_credits_bunnies + generateLocationTuples(falseHellBunnies,
+                                         southTempleBunnies,
                                          forgotten8Bunny,
+                                         falseHellBunnies)
+
+
+
+list_of_bunnies = list_of_credits_bunnies + generateLocationTuples(
                                          sleepHellBunnies,
                                          crumblingHellBunnies,
                                          southTempleBunnies,
