@@ -9,13 +9,15 @@ class AccessRequirement():
         self.regions: list[str] = list()
 
     def satisfied(self, state: CollectionState, player):
+        regionAccess = (not self.regions or all(
+                    state.can_reach(region, "Region", player)
+                    for region in self.regions))
+
         if not self.tools:
-            return True
+            return regionAccess
 
         return (all(state.has(tool, player, 1) for tool in self.tools)
-                and (not self.regions or all(
-                    state.can_reach(region, "Region", player)
-                    for region in self.regions)))
+                and regionAccess)
 
 
 class Bunny():
@@ -117,8 +119,8 @@ spookyBunnies = [
 forgottenUpperBunnies = [
         Bun("E-1").Needs("E-1"),
         Bun("E-2").Needs("E-2"),
-        Bun("E-3", 1).Needs("E-3", "E-2").Expert("E-3"),
-        Bun("E-3", 3).Needs("E-3", "E-2").Expert("E-3"),
+        Bun("E-3", 1).Needs("E-3", "E-2").Expert(),  # Only C-3 needed
+        Bun("E-3", 3).Needs("E-3", "E-2").Expert(),  # Only C-3 needed
         Bun("E-3", 2).Needs("E-3", "E-2"),
         Bun("E-3", 4).Needs("E-3", "E-2"),
         Bun("E-4").Needs("E-4", "E-3", "E-2")

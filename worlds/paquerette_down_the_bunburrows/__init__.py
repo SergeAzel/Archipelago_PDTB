@@ -165,6 +165,8 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 generateRegionBunnies(self.player, templeBunnies, expert_flag))
         south_temple = self.create_region("SouthTemple", "The Temple of Bun",
                 generateRegionBunnies(self.player, southTempleBunnies, expert_flag))
+        false_hell = self.create_region("FalseHell", "The False Hells",
+                generateRegionBunnies(self.player, falseHellBunnies, expert_flag))
 
         menu.connect(pink)
         menu.connect(sunken)
@@ -177,6 +179,7 @@ class PaqueretteDownTheBunburrowsWorld(World):
         forgotten_9.connect(forgotten_lower, rule=self.is_forgotten_lower_unlocked_by_9)
         hay.connect(temple, rule=self.is_temple_unlocked)
         temple.connect(south_temple)
+        temple.connect(false_hell)
 
         if expert_flag:
             hay.connect(spooky)  # Always accessible from C-3
@@ -194,8 +197,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
             south20 = self.create_region("South20", "The Temple of Bun",
                                          generateRegionBunnies(self.player, south20Bunny, expert_flag))
 
-            false_hell = self.create_region("FalseHell", "The False Hells",
-                                           generateRegionBunnies(self.player, falseHellBunnies, expert_flag))
             sleep_hell = self.create_region("SleepHell", "The Nightmare Hells",
                                            generateRegionBunnies(self.player, sleepHellBunnies, expert_flag))
             crumbled_hell = self.create_region("CrumbledHell", "The Crumbling Hells",
@@ -207,7 +208,6 @@ class PaqueretteDownTheBunburrowsWorld(World):
                                          generateRegionBunnies(self.player, pillarsBunny, expert_flag))
 
             forgotten_middle.connect(forgotten_8, rule=self.is_forgotten_8_unlocked)
-            temple.connect(false_hell)
             forgotten_lower.connect(sleep_hell, rule=self.is_sleep_hell_unlocked)
             sleep_hell.connect(crumbled_hell, rule=self.is_crumbled_hell_unlocked)
             crumbled_hell.connect(south20)
