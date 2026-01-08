@@ -74,7 +74,7 @@ class SurfaceTrapOdds(Range):
 class DeathLink(Toggle):
     """Should deathlink be enabled?"""
     display_name = "DeathLink"
-    default = 1
+    default = 0
 
 
 class DeathLinkBehavior(Choice):
@@ -131,7 +131,7 @@ options_presets = {
             "unlock_map": True,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
-            "death_link": True,
+            "death_link": False,
             "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0
@@ -145,7 +145,7 @@ options_presets = {
             "unlock_map": False,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
-            "death_link": True,
+            "death_link": False,
             "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0,
@@ -159,7 +159,7 @@ options_presets = {
             "unlock_map": False,
             "elevator_trap_odds": 0,
             "surface_trap_odds": 0,
-            "death_link": True,
+            "death_link": False,
             "death_link_behavior": DeathLinkBehavior.option_surface,
             "elevator_trap_depth": 10,
             "elevator_trap_increment": 0,

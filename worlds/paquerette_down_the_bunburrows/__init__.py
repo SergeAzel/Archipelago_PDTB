@@ -61,6 +61,10 @@ class PaqueretteDownTheBunburrowsWeb(WebWorld):
 
 
 class PaqueretteDownTheBunburrowsWorld(World):
+    """
+    Capture Bunnies and explore the Bunburrows in this Soko-bun experience!
+    Archipelago amps up this already difficult puzzle game by further locking your progression behind the Multiworld.
+    """
     game: str = PaqueretteGame
 
     options_dataclass = PaqueretteOptions
