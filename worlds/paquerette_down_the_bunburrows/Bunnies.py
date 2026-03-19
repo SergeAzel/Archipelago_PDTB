@@ -75,20 +75,22 @@ sunkenBunnies = [
         Bun("N-1"),
         Bun("N-2").Needs("N-2"),
         Bun("N-3").Needs("N-3"),
+        # N-4 can be captured from C-10 with only C-10 tools
         Bun("N-4").Needs("N-4").Expert("C-4", regions=["Hay"]),
         Bun("N-5").Needs("N-5"),
         Bun("N-6").Needs("N-6"),
         Bun("N-7").Needs("N-7"),
         Bun("N-8").Needs("N-8"),
         Bun("N-9").Needs("N-9"),
-        Bun("N-10").Needs("N-10"),
+        # N-10 can be captured from C-10 with only C-10 tools
+        Bun("N-10").Needs("N-10").Expert("C-10", regions=["Hay"]),
         Bun("N-11").Needs("N-11")
         ]
 
 hayBunnies = [
         Bun("C-1").Needs("C-1"),
         Bun("C-2").Needs("C-2"),
-        Bun("C-3"),
+        Bun("C-3"),  # Tutorial level, tools guaranteed
         Bun("C-4").Needs("C-4"),
         Bun("C-5").Needs("C-5"),
         Bun("C-6").Needs("C-6"),
@@ -106,7 +108,7 @@ spookyBunnies = [
         Bun("S-3").Needs("S-3"),
         Bun("S-4").Needs("S-4"),
         Bun("S-5"),  # No Tools
-        Bun("S-6"),  # No Tools
+        Bun("S-6"),  # Tutorial level, tools guaranteed
         Bun("S-7").Needs("S-7"),
         Bun("S-8").Needs("S-8"),
         Bun("S-9").Needs("S-9"),
@@ -181,7 +183,7 @@ southTempleBunnies = [
         Bun("S-14").Needs("S-14"),
         Bun("S-15").Needs("S-15"),
         Bun("S-16").Needs("S-16"),
-        Bun("S-17"),
+        Bun("S-17").Needs("S-17"),
         Bun("S-18").Needs("S-18"),
         Bun("S-19").Needs("S-19"),
         ]
