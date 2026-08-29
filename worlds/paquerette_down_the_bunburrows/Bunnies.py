@@ -167,9 +167,9 @@ templeBunnies = [
         Bun("W-18").Needs("W-18"),
 
         Bun("N-12").Needs("N-12"),
-        Bun("N-13", 1),
-        Bun("N-13", 2).Needs("N-13"),
-        Bun("N-13", 3),
+        Bun("N-13", 1).Needs("N-13"),
+        Bun("N-13", 2),
+        Bun("N-13", 3).Needs("N-13"),
         Bun("N-14").Needs("N-14"),
         Bun("N-15").Needs("N-15"),
         Bun("N-16").Needs("N-16"),
