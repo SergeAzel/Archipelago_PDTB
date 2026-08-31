@@ -75,7 +75,7 @@ sunkenBunnies = [
         Bun("N-1"),
         Bun("N-2").Needs("N-2"),
         Bun("N-3").Needs("N-3"),
-        # N-4 can be captured from C-10 with only C-10 tools
+        # N-4 can be captured from C-4 with only C-4 tools
         Bun("N-4").Needs("N-4").Expert("C-4", regions=["Hay"]),
         Bun("N-5").Needs("N-5"),
         Bun("N-6").Needs("N-6"),

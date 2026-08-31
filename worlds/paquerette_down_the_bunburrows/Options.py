@@ -1,8 +1,6 @@
 from Options import Toggle, PerGameCommonOptions, Choice, Range
 from dataclasses import dataclass
 
-from worlds.stardew_valley.stardew_rule import true_
-
 
 class HomeCaptures(Toggle):
     """Intended for players familiar with deeper mechanics of Paquerette:
@@ -16,22 +14,23 @@ class VictoryCondition(Choice):
 
     - **Credits**: Reach the Credits! Beginner-friendliest choice.
     - **Golden Bunny**: Find the Golden Bunny!
-    - **Golden Fluffle**: Capture bunnies until you find all Golden Fluffles!
+    - **Golden Fluff**: Capture bunnies until you find all Golden Fluff!
     - **Full Clear**: Capture all bunnies!"""
     display_name = "Victory Condition"
     rich_text_doc = True
     option_credits = 0
     option_golden_bunny = 1
-    option_golden_fluffle = 2
+    option_golden_fluff = 2
     option_full_clear = 3
+    alias_golden_fluffle = 2  # pre-rename name, kept for backwards compatibility
     default = 0
 
 
-class GoldenFluffleCount(Range):
-    """**GOLDEN FLUFFLE RUNS ONLY**
-    Determines how many Golden Fluffles will be scattered through your world!
+class GoldenFluffCount(Range):
+    """**GOLDEN FLUFF RUNS ONLY**
+    Determines how much Golden Fluff will be scattered through your world!
     """
-    display_name = "Golden Fluffles"
+    display_name = "Golden Fluff"
     rich_text_doc = True
     range_start = 1
     range_end = 20
@@ -110,7 +109,7 @@ class PaqueretteOptions(PerGameCommonOptions):
     home_captures: HomeCaptures
     expert_routing: ExpertRouting
     victory_condition: VictoryCondition
-    golden_fluffles: GoldenFluffleCount
+    golden_fluff: GoldenFluffCount
     unlock_computer: UnlockComputer
     unlock_map: UnlockMap
     elevator_trap_odds: ElevatorTrapOdds
@@ -126,7 +125,7 @@ options_presets = {
             "home_captures": False,
             "expert_routing": False,
             "victory_condition": VictoryCondition.option_credits,
-            "golden_fluffles": 1,
+            "golden_fluff": 1,
             "unlock_computer": True,
             "unlock_map": True,
             "elevator_trap_odds": 0,
@@ -140,7 +139,7 @@ options_presets = {
             "home_captures": False,
             "expert_routing": False,
             "victory_condition": VictoryCondition.option_golden_bunny,
-            "golden_fluffles": 1,
+            "golden_fluff": 1,
             "unlock_computer": True,
             "unlock_map": False,
             "elevator_trap_odds": 0,
@@ -153,8 +152,8 @@ options_presets = {
         "Expert": {
             "home_captures": True,
             "expert_routing": True,
-            "victory_condition": VictoryCondition.option_golden_fluffle,
-            "golden_fluffles": 6,
+            "victory_condition": VictoryCondition.option_golden_fluff,
+            "golden_fluff": 6,
             "unlock_computer": True,
             "unlock_map": False,
             "elevator_trap_odds": 0,

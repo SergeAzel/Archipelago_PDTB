@@ -2,9 +2,9 @@ from .RawItems import raw_list_of_tools
 
 last_item_id = 0
 
-# Fluffle
-fluffle = "Fluffle"
-golden_fluffle = "Golden Fluffle"
+# Fluff
+fluff = "Fluff"
+golden_fluff = "Golden Fluff"
 
 # Traps
 surface_teleport_trap = "Surface Teleport Trap"
@@ -20,7 +20,7 @@ def toTuple(itemNames):
 
 
 list_of_tools = toTuple(raw_list_of_tools)
-list_of_garbage = toTuple([fluffle, golden_fluffle])
+list_of_garbage = toTuple([fluff, golden_fluff])
 list_of_traps = toTuple([surface_teleport_trap, elevator_trap])
 
 list_of_items = list_of_tools + list_of_garbage + list_of_traps
