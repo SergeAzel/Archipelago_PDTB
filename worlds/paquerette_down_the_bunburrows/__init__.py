@@ -129,6 +129,15 @@ class PaqueretteDownTheBunburrowsWorld(World):
         return PaqueretteItem(fluff, ItemClassification.filler,
                               self.item_name_to_id[fluff], self.player)
 
+    def create_item(self, name: str):
+        # BAD QUICK FIX CODE! Make cleaner at some point - Sports
+        if name == "Surface Teleport Trap" or name == "Elevator Trap":
+            return PaqueretteItem(name, ItemClassification.trap, self.item_name_to_id[name], self.player)
+        elif name == "Fluff" or name == "Golden Fluff":
+            return PaqueretteItem(name, ItemClassification.filler, self.item_name_to_id[name], self.player)
+        else:
+            return PaqueretteItem(name, ItemClassification.progression, self.item_name_to_id[name], self.player)
+
     def set_rules(self) -> None:
         self.multiworld.completion_condition[self.player] = self.can_win
 
