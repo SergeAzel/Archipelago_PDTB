@@ -185,9 +185,11 @@ class PaqueretteDownTheBunburrowsWorld(World):
                 generateRegionBunnies(self.player, falseHellBunnies, expert_flag))
         menu.connect(pink)
         menu.connect(sunken)
-        menu.connect(hay, rule=lambda state: len(self.get_bunnies(state)) >= 18)
-        menu.connect(spooky, rule=lambda state: len(self.get_bunnies(state)) >= 30)
-        menu.connect(forgotten_upper, rule=lambda state: len(self.get_bunnies(state)) >= 45)
+        bunny_count_entrances = [
+            menu.connect(hay, rule=lambda state: len(self.get_bunnies(state)) >= 18),
+            menu.connect(spooky, rule=lambda state: len(self.get_bunnies(state)) >= 30),
+            menu.connect(forgotten_upper, rule=lambda state: len(self.get_bunnies(state)) >= 45),
+        ]
 
         forgotten_upper.connect(forgotten_middle, rule=self.is_forgotten_middle_unlocked_by_upper)
         forgotten_middle.connect(forgotten_8, rule=self.is_forgotten_8_unlocked)
@@ -232,6 +234,11 @@ class PaqueretteDownTheBunburrowsWorld(World):
             if expert_flag:
                 # Unlikely but one day it might be required
                 south_temple.connect(temple, rule=self.is_temple_unlocked_backdoor)
+
+        # These entrances count reachable bunnies across the whole world, so reaching any region can open them.
+        for region in self.get_regions():
+            for entrance in bunny_count_entrances:
+                self.multiworld.register_indirect_condition(region, entrance)
 
     def create_region(self, name, hint="", locations=[]):
         region = Region(name, self.player, self.multiworld, hint=hint)
