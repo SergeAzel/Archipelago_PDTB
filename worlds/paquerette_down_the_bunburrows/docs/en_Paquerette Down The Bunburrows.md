@@ -14,7 +14,7 @@
 ## Compatibility
 
 This version of the APWorld targets **Paquerette Down The Bunburrows v1.1.4** and the
-**Bunject Archipelago client mod v1.3.0**. See the [Setup Guide](../../../tutorial/Paquerette%20Down%20The%20Bunburrows/setup_en) for details.
+**Bunject Archipelago client mod v1.3.1**. See the [Setup Guide](../../../tutorial/Paquerette%20Down%20The%20Bunburrows/setup_en) for details.
 
 
 ## What kind of game is this?
